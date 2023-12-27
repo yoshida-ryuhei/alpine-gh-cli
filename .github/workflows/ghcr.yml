@@ -16,13 +16,7 @@ jobs:
       - name: Add support of docker for multi-platform
         run: docker buildx create --use --platform linux/amd64,linux/arm64
       - name: Build the Docker image
-        run: docker buildx build . --file Dockerfile --platform linux/amd64,linux/arm64 --load
-      - name: Make tag of the Docker image of main branch
-        if: github.ref_type == 'branch'
-        run: docker buildx build . --build-arg="ALPINE_VERSION=$(cat alpine_version)" --build-arg="GH_CLI_VERSION=$(cat gh_cli_version)" --platform=linux/amd64,linux/arm64 --tag ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest --load
-      - name: Build the Docker image of tag
-        if: github.ref_type == 'tag'
-        run: docker buildx build . --build-arg="ALPINE_VERSION=$(cat alpine_version)" --build-arg="GH_CLI_VERSION=$(cat gh_cli_version)" --platform=linux/amd64,linux/arm64 --tag ghcr.io/yoshida-ryuhei/alpine-gh-cli:${{ github.ref_name }} --load
+        run: docker buildx build . --file Dockerfile --platform linux/amd64,linux/arm64
       - name: login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -31,7 +25,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Register to GitHub Container Registry of main branch
         if: github.ref_type == 'branch'
-        run: docker push ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest
+        run: docker buildx build . --build-arg="ALPINE_VERSION=$(cat alpine_version)" --build-arg="GH_CLI_VERSION=$(cat gh_cli_version)" --platform=linux/amd64,linux/arm64 --tag ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest --push
       - name: Register to GitHub Container Registry of tag
         if: github.ref_type == 'tag'
-        run: docker push ghcr.io/yoshida-ryuhei/alpine-gh-cli:${{ github.ref_name }}
+        run: docker buildx build . --build-arg="ALPINE_VERSION=$(cat alpine_version)" --build-arg="GH_CLI_VERSION=$(cat gh_cli_version)" --platform=linux/amd64,linux/arm64 --tag ghcr.io/yoshida-ryuhei/alpine-gh-cli:${{ github.ref_name }} --push
