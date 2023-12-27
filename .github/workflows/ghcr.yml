@@ -13,8 +13,10 @@ jobs:
     environment: container-registry
     steps:
       - uses: actions/checkout@v3
+      - name: Add support of docker for multi-platform
+        run: docker buildx create --platform linux/amd64,linux/arm64
       - name: Build the Docker image
-        run: docker buildx build . --file Dockerfile
+        run: docker buildx build . --file Dockerfile --platform linux/amd64,linux/arm64
       - name: Make tag of the Docker image of main branch
         if: github.ref_type == 'branch'
         run: docker buildx build . --build-arg="ALPINE_VERSION=$(cat alpine_version)" --build-arg="GH_CLI_VERSION=$(cat gh_cli_version)" --platform=linux/amd64,linux/arm64 --tag ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest
