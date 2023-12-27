@@ -14,6 +14,7 @@ jobs:
   deploy_container:
     runs-on: ubuntu-latest
     environment: container-registry
+    if: github.event_name == 'push'
     needs: build_container
     steps:
       - uses: actions/checkout@v3
