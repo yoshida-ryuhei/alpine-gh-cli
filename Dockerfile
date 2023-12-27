@@ -1,2 +1,4 @@
-FROM alpine:3.19
-RUN apk add --no-cache github-cli=2.39.2-r0
+ARG ALPINE_VERSION=3.19
+FROM alpine:${ALPINE_VERSION}
+ARG GH_CLI_VERSION=2.39.2-r0
+RUN apk add --no-cache github-cli=${GH_CLI_VERSION}
