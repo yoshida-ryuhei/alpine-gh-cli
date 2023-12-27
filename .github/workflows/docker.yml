@@ -11,3 +11,19 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build the Docker image
         run: docker buildx build . --file Dockerfile --tag ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest
+  deploy_container:
+    runs-on: ubuntu-latest
+    environment: container-registry
+    needs: build_container
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: docker buildx build . --file Dockerfile --tag ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest
+      - name: Register to GitHub Container Registry
+        run: docker login ghcr.io
+        env:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Register to GitHub Container Registry
+        run: docker push ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest
