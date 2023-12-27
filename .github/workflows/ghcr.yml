@@ -20,7 +20,7 @@ jobs:
         run: make build_container
       - name: Build the Docker image of tag
         if: github.ref_type == 'tag'
-        run: docker buildx build . --build-arg="ALPINE_VERSION=$(shell cat alpine_version)" --build-arg="GH_CLI_VERSION=$(shell cat gh_cli_version)" --tag ghcr.io/yoshida-ryuhei/alpine-gh-cli:${{ github.ref_name }}
+        run: docker buildx build . --build-arg="ALPINE_VERSION=$(cat alpine_version)" --build-arg="GH_CLI_VERSION=$(cat gh_cli_version)" --tag ghcr.io/yoshida-ryuhei/alpine-gh-cli:${{ github.ref_name }}
       - name: login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
