@@ -4,9 +4,9 @@ build_container:
 
 .PHONY: test
 test:
-	docker run --rm -it ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest gh help
-	docker run --rm --env GH_TOKEN=$(shell cat .env) -it ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest gh issue list -R yoshida-ryuhei/alpine-gh-cli
-	docker run --rm --env GH_TOKEN=$(shell cat .env) -it ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest gh pr list -R yoshida-ryuhei/alpine-gh-cli
+	docker run --rm  ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest gh help
+	docker run --rm --env GH_TOKEN=$(shell cat .env) ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest gh issue list -R yoshida-ryuhei/alpine-gh-cli
+	docker run --rm --env GH_TOKEN=$(shell cat .env) ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest gh pr list -R yoshida-ryuhei/alpine-gh-cli
 
 .PHONY: install_pre_commit
 install_pre_commit:
