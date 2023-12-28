@@ -1,4 +1,4 @@
-name: Docker Container Image CI/CD
+name: Docker Container Image CI
 permissions:
   packages: write
 on:
@@ -7,11 +7,19 @@ on:
   pull_request:
     branches: ["main"]
 jobs:
-  build_container:
+  build_and_test_container:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Add support of docker for multi-platform
         run: docker buildx create --use --platform linux/amd64,linux/arm64
       - name: Build the Docker image
-        run: docker buildx build . --build-arg="ALPINE_VERSION=$(cat alpine_version)" --build-arg="GH_CLI_VERSION=$(cat gh_cli_version)" --platform=linux/amd64,linux/arm64 --tag ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest
+        run: |
+          docker buildx build . --build-arg="ALPINE_VERSION=$(cat alpine_version)" --build-arg="GH_CLI_VERSION=$(cat gh_cli_version)" --platform=linux/amd64,linux/arm64 --tag ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest
+          docker buildx build . --build-arg="ALPINE_VERSION=$(cat alpine_version)" --build-arg="GH_CLI_VERSION=$(cat gh_cli_version)" --platform=linux/amd64 --tag ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest --load
+      - name: Test the Installation of gh-cli
+        run: docker run --rm ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest gh help
+      - name: Test the gh-cli
+        run: |
+          docker run --rm --env GH_TOKEN=${{ secrets.GITHUB_TOKEN }} ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest gh issue list -R yoshida-ryuhei/alpine-gh-cli
+          docker run --rm --env GH_TOKEN=${{ secrets.GITHUB_TOKEN }} ghcr.io/yoshida-ryuhei/alpine-gh-cli:latest gh pr list -R yoshida-ryuhei/alpine-gh-cli
